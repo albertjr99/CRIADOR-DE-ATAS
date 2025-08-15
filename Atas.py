@@ -135,7 +135,7 @@ TEMPLATES = {
       <h1 class="text-lg h-bold">Sistema de Atas — Comitê de Investimentos</h1>
       <div class="flex gap-2">
         <a href="/export/docx" class="px-3 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700">Exportar DOCX</a>
-        <a href="/export/pdf"  class="px-3 py-2 rounded bg-emerald-600 text-white hover:bg-emerald-700">Exportar PDF</a>
+       
       </div>
     </div>
   </header>
@@ -724,3 +724,4 @@ async def export_docx():
     filename = f"Ata_{meeting['numero']:03d}-{meeting['ano']}.docx"
     return StreamingResponse(buf, media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                              headers={"Content-Disposition": f"attachment; filename={filename}"})
+
