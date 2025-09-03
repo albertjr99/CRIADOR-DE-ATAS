@@ -6,6 +6,7 @@ from jinja2 import Environment, DictLoader, select_autoescape
 from datetime import date, timedelta
 from markupsafe import Markup
 from docx.shared import Pt, Inches, Cm
+from contextlib import asynccontextmanager
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import io, sqlite3, os
 
@@ -135,7 +136,7 @@ TEMPLATES = {
       <h1 class="text-lg h-bold">Sistema de Atas — Comitê de Investimentos</h1>
       <div class="flex gap-2">
         <a href="/export/docx" class="px-3 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700">Exportar DOCX</a>
-        <a href="/export/pdf"  class="px-3 py-2 rounded bg-emerald-600 text-white hover:bg-emerald-700">Exportar PDF</a>
+        
       </div>
     </div>
   </header>
@@ -292,10 +293,13 @@ STATE = {"item2": ITEM2_DEFAULT, "assuntos": ASSUNTOS_DEFAULT, "resumo": {"renta
 # --------------------- App
 app = FastAPI(title=APP_TITLE)
 
-@app.on_event("startup")
-async def on_startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     os.makedirs(STATIC_DIR, exist_ok=True)
     ensure_schema()
+    yield
+
+app = FastAPI(title=APP_TITLE, lifespan=lifespan)
 
 # --------------------- Helpers (HTML/PDF)
 def numero_sessao_fmt(numero: int, ano: int) -> str:
